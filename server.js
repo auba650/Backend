@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
   res.send("🚀 Backend en ligne avec Railway !");
 });
 
+// ✅ Route d'envoi d'email
 app.post("/send-email", async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -30,16 +31,22 @@ app.post("/send-email", async (req, res) => {
       from: email,
       to: "abdoutonzar@gmail.com",
       subject: `📩 Nouveau message de ${name}`,
-      html: `<p><b>Nom :</b> ${name}<br><b>Email :</b> ${email}<br><b>Message :</b> ${message}</p>`,
+      html: `
+        <p><b>Nom :</b> ${name}</p>
+        <p><b>Email :</b> ${email}</p>
+        <p><b>Message :</b></p>
+        <div>${message}</div>
+      `,
     });
 
-    res.json({ success: true });
+    res.json({ success: true, message: "Email envoyé avec succès 🚀" });
   } catch (error) {
     console.error(error);
-    res.json({ success: false, error: error.message });
+    res.status(500).json({ success: false, error: error.message });
   }
 });
 
+// ✅ Utiliser le port Railway (ou 5000 par défaut)
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, "0.0.0.0", () =>
   console.log(`🚀 Serveur démarré sur le port ${PORT}`)
