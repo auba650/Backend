@@ -1,11 +1,18 @@
 import express from "express";
 import nodemailer from "nodemailer";
 import cors from "cors";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+
 dotenv.config();
 const app = express();
+
 app.use(cors());
 app.use(express.json());
+
+// ✅ Route de test
+app.get("/", (req, res) => {
+  res.send("🚀 Backend en ligne avec Railway !");
+});
 
 app.post("/send-email", async (req, res) => {
   const { name, email, message } = req.body;
@@ -15,36 +22,25 @@ app.post("/send-email", async (req, res) => {
       service: "gmail",
       auth: {
         user: "abdoutonzar@gmail.com",
-         pass: process.env.GMAIL_PASS,
+        pass: process.env.GMAIL_PASS,
       },
     });
 
-await transporter.sendMail({
-  from: email,
-  to: "abdoutonzar@gmail.com",
-  subject: `📩 Nouveau message de ${name}`,
-  html: `
-    <div style="font-family: Arial, sans-serif; padding: 20px; background:#f9f9f9; border-radius:8px;">
-      <h2 style="color:#e63946;">📩 Nouveau message reçu</h2>
-      <p><strong>👤 Nom :</strong> ${name}</p>
-      <p><strong>📧 Email :</strong> ${email}</p>
-      <p><strong>💬 Message :</strong></p>
-      <div style="background:#fff; border:1px solid #ddd; padding:15px; border-radius:5px; margin-top:10px;">
-        ${message}
-      </div>
-      <hr style="margin:20px 0;" />
-      <p style="font-size:12px; color:#888;">Cet email a été envoyé depuis ton portfolio 🚀</p>
-    </div>
-  `,
-});
+    await transporter.sendMail({
+      from: email,
+      to: "abdoutonzar@gmail.com",
+      subject: `📩 Nouveau message de ${name}`,
+      html: `<p><b>Nom :</b> ${name}<br><b>Email :</b> ${email}<br><b>Message :</b> ${message}</p>`,
+    });
 
     res.json({ success: true });
   } catch (error) {
     console.error(error);
-    res.json({ success: true });
+    res.json({ success: false, error: error.message });
   }
 });
 
-
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`🚀 Serveur démarré sur http://localhost:${port}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, "0.0.0.0", () =>
+  console.log(`🚀 Serveur démarré sur le port ${PORT}`)
+);
