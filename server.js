@@ -9,6 +9,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("Bienvenue sur le serveur de mon portfolio !");
+});
 app.post("/send-email", async (req, res) => {
   const { name, email, message } = req.body;
 
